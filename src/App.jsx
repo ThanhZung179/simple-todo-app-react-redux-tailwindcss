@@ -1,31 +1,50 @@
-import { useState } from 'react'
+import { useState,useReducer } from 'react'
 import AddTask from './components/AddTask'
 import { v4 } from "uuid"
 import TaskList from './components/TaskList'
 
+function todosReducer(state, action) {
+  switch (action.type) {
+    case 'ADD_TASK':
+      return [
+        ...state,
+        {
+          id: v4(),
+          text: action.payload,
+          done: false,
+        },
+      ];
+    case 'DELETE_TASK':
+      return state.filter((task) => task.id !== action.payload);
+    case 'EDIT_TASK':
+      return state.map((task) =>
+        task.id === action.payload.id ? { ...task, text: action.payload.text } : task
+      );
+    case 'TOGGLE_TASK':
+      return state.map((task) =>
+        task.id === action.payload ? { ...task, done: !task.done } : task
+      );
+    default:
+      return state;
+  }
+}
+
 function App() {
 
-  const [todos, setTodos] = useState([
+  const initialState = [
     { id: v4(), text: 'Do homework', done: false },
     { id: v4(), text: 'Buy groceries', done: true },
-    { id: v4(), text: 'Eat cake', done: false }
-  ])
+    { id: v4(), text: 'Eat cake', done: false },
+  ]
 
-  console.log(todos)
+  const [todos, dispatch] = useReducer(todosReducer, initialState);
 
   const [text, setText] = useState('')
 
   function handleAddTask() {
-    if (text.trim() != '') {
-      setTodos(prevState => [
-        ...prevState,
-        {
-          id: v4(),
-          text: text,
-          done: false
-        }
-      ])
-      setText('')
+    if (text.trim() !== '') {
+      dispatch({ type: 'ADD_TASK', payload: text });
+      setText('');
     }
   }
 
@@ -34,25 +53,18 @@ function App() {
   }
 
   function handleDeleteTask(selectedTodoID) {
-    setTodos(prevState => prevState.filter(todo => todo.id !== selectedTodoID));
+    dispatch({ type: 'DELETE_TASK', payload: selectedTodoID });
   }
 
+
   function handleEditTask(todoChangedText) {
-    setTodos(prevState =>
-      prevState.map(todo =>
-        todo.id === todoChangedText.id ? { ...todoChangedText } : todo
-      )
-    );
+    dispatch({ type: 'EDIT_TASK', payload: todoChangedText });
   }
 
   function handleCheckboxChange(todoID) {
-    setTodos((prevState) =>
-      prevState.map((todo) =>
-        todo.id === todoID ? { ...todo, done: !todo.done } : todo
-      )
-    );
+    dispatch({ type: 'TOGGLE_TASK', payload: todoID });
   }
-  
+
 
 
   return (
