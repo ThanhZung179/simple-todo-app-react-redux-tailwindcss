@@ -37,14 +37,20 @@ function App() {
     setTodos(prevState => prevState.filter(todo => todo.id !== selectedTodoID));
   }
 
-  
+  function handleEditTask(todoChangedText) {
+    setTodos(prevState =>
+      prevState.map(todo =>
+        todo.id === todoChangedText.id ? { ...todoChangedText } : todo
+      )
+    );
+  }
 
 
   return (
     <>
       <h1 className='font-mono text-4xl font-bold text-center mt-10 text-blue-500'>Todo List</h1>
       <AddTask text={text} handleAddTask={handleAddTask} handleTextChange={handleTextChange} />
-      <TaskList todos={todos} handleDeleteTask={handleDeleteTask} handleEditTask={handleDeleteTask} />
+      <TaskList todos={todos} handleDeleteTask={handleDeleteTask} handleEditTask={handleEditTask} setTodos={setTodos} />
     </>
   )
 }
