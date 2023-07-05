@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 
-function TaskList({ todos, handleDeleteTask, handleEditTask }) {
+function TaskList({ todos, handleDeleteTask, handleEditTask, handleCheckboxChange }) {
   const [editMode, setEditMode] = useState('');
   const [editedText, setEditedText] = useState('');
+
+  console.log('before edited', todos[0]['done'])
 
   function handleEditButtonClick(todoID, todoText) {
     setEditMode(todoID);
     setEditedText(todoText);
   }
-
+  
   function handleSaveButtonClick(todoID,todoDone) {
+    const todo = todos.find(todo => todo.id === todoID);
     handleEditTask({ id: todoID, text: editedText, done: todoDone });
     setEditMode('');
+    setEditedText('');
   }
+  
 
   function handleCancelEditButtonClick() {
     setEditMode('');
+    console.log(todos[0]['done'])
   }
 
   return (
@@ -46,7 +52,7 @@ function TaskList({ todos, handleDeleteTask, handleEditTask }) {
           ) : (
             <>
               <label>
-                <input type="checkbox" className="mr-2"></input>
+                <input type="checkbox" className="mr-2" checked={todo.done} onChange={() => handleCheckboxChange(todo.id)}></input>
                 {todo.text}
               </label>
               <button

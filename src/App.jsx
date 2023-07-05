@@ -45,12 +45,22 @@ function App() {
     );
   }
 
+  function handleCheckboxChange(todoID) {
+    setTodos((prevState) =>
+      prevState.map((todo) =>
+        todo.id === todoID ? { ...todo, done: !todo.done } : todo
+      )
+    );
+  }
+  
+
 
   return (
     <>
       <h1 className='font-mono text-4xl font-bold text-center mt-10 text-blue-500'>Todo List</h1>
       <AddTask text={text} handleAddTask={handleAddTask} handleTextChange={handleTextChange} />
-      <TaskList todos={todos} handleDeleteTask={handleDeleteTask} handleEditTask={handleEditTask} setTodos={setTodos} />
+      <TaskList todos={todos} handleDeleteTask={handleDeleteTask} handleEditTask={handleEditTask} handleCheckboxChange={handleCheckboxChange} />
+
     </>
   )
 }
